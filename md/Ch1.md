@@ -201,7 +201,7 @@ Packet suffers from several types of delays at each node
 * ...
 These are accumulated to called **Total nodal Delay**
 
-#### Types of delays
+#### Types of delays (Nodal delay / single router)
 * Processing Delay
   * examine the packet's header
   * determine where to direct the packet
@@ -225,3 +225,141 @@ These are accumulated to called **Total nodal Delay**
 * Difference between Propagation delay & Transmission delay
   * Propagation Delay: time from a tollbooth to the next toolbooth
   * Transmission Delay: time for tollbooth to serve the car
+* $d_{nodal} = d_{proc} + d_{queue} + d_{trans} + d_{prop}$
+  * $d_{proc}$ is always negligible, it strongly influences a router's maximum throughput (max rate at which a router can forward packets)
+
+### Queuing Delay and Packet Loss
+* Factors to affect $d_{queue}$ 
+  * rate at which traffic arrives at the queue
+  * transmission rate of the link
+  * traffic arrives periodically / bursts
+* $a$ : average rate at which packets arrive at the queue 
+* $R$ : transmission rate 
+* $L$ : all packets consits of L bits
+* **traffic intensity**: $\frac{La}{R}$
+  * If $\frac{La}{R} > 1$
+    * Queue tends to increase without bound
+    * Queuing delay approach infinity 
+    * *Design your system so that the traffic intensity is no greater than 1*
+  * Otherwise, nature of arriving traffic impacts significantly
+    * Periodically: 
+      * every packet arrives every $\frac{L}{R}$ seconds,
+      * empty queue 
+      * no queuing delay
+    * In burst but periodically :
+      * every N packets arrive simultaneously every (L/R)N seconds
+      * Average $d_{queue} = \frac{(N-1)L/R}{2}$ 
+      ![](https://images2018.cnblogs.com/blog/1126979/201803/1126979-20180309140232977-1827553384.png)
+
+#### Packet Loss
+* The fraction of lost packets increases as the traffic intensity inccreases
+* The performance at a node is not only measures in terms of delay, but also in terms of probability of packet loss
+* A lost packet may be retransmitted on an end-to-end basis to ensure all data transferred to the destination
+
+### End-to-End Delay
+* uncongested network ($d_{queue} \approx 0)
+* N - 1 routers
+* $d_{proc}$ at each router and at the source
+* $d_{prop}$ on each link 
+* $d_{trans}$ out of each router and source 
+* $d_{end-end} = N * (d_{proc} + d_{trans} + d_{prop})$
+
+#### End System, application, and other delays
+Additional significant delays 
+* transmit a packet into a shared medium
+  puerposefully delay its transmission as part of its protocol for sharing the medium with other end systems
+* media packetization delay
+  * in VoIP applications (Voice-over-IP)
+  * Must fill a packet with encoded digitized speech 
+    Time to fill a packet (packetization delay)
+* ...
+  
+### Throughput in Computer Networks
+Another critical performance measure
+* **instantaneous throughput** at any instant of time is the rate at which Host B is receiving the file
+* ** average throughput** F bits file takes T seconds to transfer
+  $\frac{F}{T}$
+* Some applications are desirable to have a low delay and an instantaneous throughput consistently above some threshold
+  (e.g. Internet telephony)
+* Others are likely to have the highest possible throughput and not worry about delay (e.g. file transfer)
+* **Bottleneck link**
+* If no intervening traffic (e.g. Ethernet / p2p) throughput can be approximated as the minimum transmission rate
+* More generally, depend not only on the transmission rates of the links, but also on the intervening traffic 
+
+## Protocol Layers and Their Service Models
+### Layered Architecture
+Each layer provides its service by
+1. performing certain actions within that layer
+2. using the services of the layer directly below it
+
+* A layered architecture makes it much easier to change the implementation of the service provided by the layer
+
+* As long as the service provided from the layer is unchanged, changing its implemenetation would not affect other layers 
+  
+#### Protocol Layering
+* Each protocol belongs to one of the layers, similiar with each function in the airline architecture
+* Services that a layer offers to the layer above, **service model** of a layer
+* Services provided by layer n might be implemented by using an unreliable edge-to-edge message delivery service of layer n-1 and adding layer n functionality to detect and retransmit lost messages
+* A protocol layer can be implemented in software, hardware, or both
+  * Application-layer is implemented in software(HTTP / SMTP..)
+  * Transport-layer is the same
+  * Physical layer and data link layers are implementd in a *network interface card* (since they are responsible for handling communication over a specific link)
+  * Network layer is a mixed of both
+* Pros
+  * A structured way to discuss system components
+  * Modularity makes it easier to update system components 
+* Cons
+  * One layer may duplicate lower-layer functionality
+  * functionality at one layer may need information that is present only in another layer (which violates the goal of separation of layers)
+* Internet / TCP/IP protocol stack consists of 5 layers
+* OSI consists of 7 layers
+
+#### Application Layer
+* HTTP (Web document request and transfer)
+* SMTP (transfer for e-mail messages)
+* FTP  (files tranfer between end systems)
+* DNS is done by the help of application-layer protocol
+* information in packets at this layer is called a **message**
+
+#### Transport Layer
+Transport messages between endpoints
+Two transfer protocols
+* TCP 
+  * connection-oriented 
+  * guaranteed delivery
+  * provided flow control
+  * congestion-control mechanism 
+    (source throttles its transmission rate when the network is congested)
+* UDP
+  * connectionless service
+  * no reliability
+  * no control flow
+  * no congestion control
+* Transport layer packet: **segment**
+  
+#### Network Layer
+responsibles for moving network-layer packets **datagrams**
+* TCP / UDP passes last-layer segment / packet + a destination address to this layer
+* IP protocol
+  * defines the fields in the datagram
+  * how the end systems and routers act on these fields
+* Routing protocols
+  determine the routes that datagrams take 
+* Referred as the *IP layer*
+
+#### Link Layer
+Move the datagram to the next node along the route
+* At this node, network layer passes the datagram down to the link layer and delivers
+* At the next node, link layer passes the datagram up to the network layer
+* Services provided by this layer depend on the specific protocol (e.g. Ethernet, WiFi, cable access network;s DOCSIS)
+* As datagrams need to traverse several links to travel from source to destination, they are handled by different link-layer protocls at different links along its route
+* Link-layer packet: **frames**
+  
+#### Physical Layer
+Move the *individual bits* within the frame from one node to the next
+* Link independent
+* further depend on the actual transmission medium of the link
+* There are many physical-layer protocols, but in each case, bits are moved across the link differently
+
+#### OSI Model
+TODO
