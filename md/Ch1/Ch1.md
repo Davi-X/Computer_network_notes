@@ -339,7 +339,7 @@ Two transfer protocols
   
 #### Network Layer
 responsibles for moving network-layer packets **datagrams**
-* TCP / UDP passes last-layer segment / packet + a destination address to this layer
+* TCP / UDP passes   segment / packet + a destination address to this layer
 * IP protocol
   * defines the fields in the datagram
   * how the end systems and routers act on these fields
@@ -351,10 +351,12 @@ responsibles for moving network-layer packets **datagrams**
 Move the datagram to the next node along the route
 * At this node, network layer passes the datagram down to the link layer and delivers
 * At the next node, link layer passes the datagram up to the network layer
-* Services provided by this layer depend on the specific protocol (e.g. Ethernet, WiFi, cable access network;s DOCSIS)
+* Services provided by this layer depend on the specific protocol (e.g. Ethernet, WiFi, cable access network's DOCSIS)
 * As datagrams need to traverse several links to travel from source to destination, they are handled by different link-layer protocls at different links along its route
 * Link-layer packet: **frames**
-  
+* data synchronization
+* control flow 
+* 
 #### Physical Layer
 Move the *individual bits* within the frame from one node to the next
 * Link independent
@@ -362,4 +364,31 @@ Move the *individual bits* within the frame from one node to the next
 * There are many physical-layer protocols, but in each case, bits are moved across the link differently
 
 #### OSI Model
-TODO
+OSI model: **Open Systems Interconnection** consistes of seven layers
+Two additional layers
+* Presentation layer: provide services that allow communication applications to interpret the meaning of data exchanged 
+  * data compression
+  * data encryption
+  * data description
+    frees the apps from worrying about the internal format(which may differ from computers) in which data are represented/stored 
+* Session layer: provide for delimiting and synchronization of data exchange 
+  * include means to build a  ckeckpoint + recovery scheme
+
+Q: Why some developers uses 5 layers rather than OSI model?
+Q: Are the services of these 2 additional layer not important?
+A: It is up to the app developer to decide
+
+### Encapsulation
+Link-layer switch has 2 bottom layers
+Routers has 3 bottom layers
+Hosts implement all 5 layers
+
+* Transport-layer segment = header $H_t$ + application-layer messgae  
+* Network-layer datagram = header $H_n$ + transport-layer segment
+* ...
+* At each layer, contains 2 parts
+  * header fields
+  * payload field (packet from the above layer)
+* In reality, have to consider about reconstruction
+
+## Networks Under Attack
