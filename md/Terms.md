@@ -9,3 +9,5 @@
 (Max transmission rate) (e.g. highway limit)
 * Throughput      吞吐量
 * message         报文
+
+* RFC (Request for comments)
